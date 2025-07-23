@@ -3,8 +3,10 @@ import { CartContext } from "../contexts/CartContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../hooks/useAuth";
 
 export default function Carrinho() {
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const { cartItems, removeFromCart, clearCart } = useContext(CartContext);
@@ -20,6 +22,15 @@ const finalizarCompra = async () => {
     return;
   }
 
+  if (!isAuthenticated) {
+    toast.info("Faça login para finalizar a compra.");
+    // Espera 500ms para o toast aparecer
+    setTimeout(() => {
+      navigate("/login", { state: { from: "/carrinho" } });
+    }, 500);
+    return;
+  }  
+  
   const token = localStorage.getItem("token");
 
   try {

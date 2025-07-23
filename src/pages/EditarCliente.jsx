@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../contexts/AuthContext";
 import api from "../services/api";
-
 const cepRegex = /^\d{5}-?\d{3}$/;
 
 export default function EditarCliente() {
@@ -155,14 +154,35 @@ export default function EditarCliente() {
           className="w-full border p-2 rounded"
           required
         />
-        <input
-          type="password"
-          name="password"
-          value={form.password}
-          onChange={handleChange}
-          placeholder="Nova senha (opcional)"
-          className="w-full border p-2 rounded"
-        />
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            {usuario?.role === "SUPERUSER"
+              ? "Alterar senha de outro usuário (opcional)"
+              : "Nova senha (opcional)"}
+          </label>
+          <input
+            id="password"
+            type="password"
+            name="password"
+            value={form.password}
+            onChange={handleChange}
+            placeholder={
+              usuario?.role === "SUPERUSER"
+                ? "Digite nova senha para este usuário"
+                : "Digite sua nova senha"
+            }
+            title={
+              usuario?.role === "SUPERUSER"
+                ? "Como SUPERUSER, você pode definir uma nova senha para esse usuário"
+                : "Se quiser alterar sua senha, preencha este campo"
+            }
+            className="w-full border p-2 rounded"
+          />
+        </div>
+
         {usuario?.role === "SUPERUSER" && (
           <select
             name="role"

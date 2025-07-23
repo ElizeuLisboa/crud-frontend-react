@@ -1,10 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:4000", // ajuste se necessário
+  baseURL: process.env.REACT_APP_API_URL || "http://localhost:4000", // usa a variável do .env
 });
 
-// Adiciona o token em todas as requisições automaticamente
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {

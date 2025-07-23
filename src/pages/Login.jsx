@@ -1,16 +1,18 @@
 import React, { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "../contexts/AuthContext";
-
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  const from = location.state?.from || "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,13 +24,16 @@ export default function LoginPage() {
       });
 
       const token = response.data.access_token;
-      const decoded = jwtDecode(token);
+      if (!token) throw new Error("Token não recebido");
+
+      const decoded = jwtDecode(token); // <- agora funciona
       login(decoded, token);
-      localStorage.setItem('token', token);
 
       toast.success("Login realizado com sucesso!");
-      navigate("/");
+      navigate(from, { replace: true });
+
     } catch (error) {
+      console.error("Erro no login:", error);
       toast.error("Credenciais inválidas");
     }
   };
@@ -70,4 +75,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
